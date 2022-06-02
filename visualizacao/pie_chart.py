@@ -1,8 +1,8 @@
 class PieChart:
-    px = None
+    __px = None
 
     def __init__(self, data, px):
-        self.px = px
+        self.__px = px
         self.data = data
 
     def showChart(self):
@@ -13,7 +13,7 @@ class PieChart:
 
         self.data['type'] = self.data['type'].replace(labels)
 
-        fig_donut = self.px.pie(self.data, names='type', height=500, width=1000, hole=0.7,
+        fig_donut = self.__px.pie(self.data, names='type', height=500, width=1000, hole=0.7,
         title='Categoria Mais Assistida Netflix',
         color_discrete_sequence=['#ff7d00', '#00f5d4'])
         fig_donut.update_traces(hovertemplate=None, textposition='outside',

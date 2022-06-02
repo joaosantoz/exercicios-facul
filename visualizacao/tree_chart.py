@@ -1,22 +1,20 @@
 class TreeChart:
-    pd = None 
-    px = None 
-    data = None
+    __pd = None 
+    __px = None 
+    __data = None
 
     def __init__(self, data, pd, px):
-        self.data = data
-        self.pd = pd
-        self.px = px
+        self.__data = data
+        self.__pd = pd
+        self.__px = px
         
     def showChart(self):
-        print(self.data['genre'])
+        df_genre = self.__pd.DataFrame(self.__data.genre.value_counts()).reset_index().rename(columns={'index':'genre', 'genre':'count'})
+        fig_tree = self.__px.treemap(df_genre, path=[self.__px.Constant("Distribuição dos Gêneros"), 'count','genre'])
 
-        df_genre = self.pd.DataFrame(self.data.genre.value_counts()).reset_index().rename(columns={'index':'genre', 'genre':'count'})
-        fig_tree = self.px.treemap(df_genre, path=[self.px.Constant("Distribution of Geners"), 'count','genre'])
-
-        fig_tree.update_layout(title='Highest watched Geners on Netflix',
+        fig_tree.update_layout(title='Gêneros mais assistidos da Netflix',
             margin=dict(t=50, b=0, l=70, r=40),
-            plot_bgcolor='#333', paper_bgcolor='#333',
+            plot_bgcolor='#001524', paper_bgcolor='#001524',
             title_font=dict(size=25, color='#fff', family="Lato, sans-serif"),
             font=dict(color='#8a8d93'),
             hoverlabel=dict(bgcolor="#444", font_size=13, font_family="Lato, sans-serif"))

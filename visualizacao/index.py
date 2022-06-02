@@ -1,9 +1,6 @@
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-# import matplotlib.pyplot as plt
-# from pyparsing import Char
-import seaborn as sns
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -11,36 +8,58 @@ from line_chart import LineChart
 from pie_chart import PieChart
 from tree_chart import TreeChart
 
-data = pd.read_csv("./dataset/netflix_titles.csv", index_col = "show_id", parse_dates = True)
-data.head(3)
+class ChartBuilder:
+    __data: None
 
-data.info()
+    def __init__(self, dataSet):
+        dataSet = dataSet
+        dataSet.head(3)
+        dataSet.info()
+        dataSet.isnull().sum()
+        dataSet.nunique()
 
-data.isnull().sum()
+        self.__data = dataSet
 
-data.nunique()
+        self.organiseData()
 
-data = data.dropna( how='any',subset=['cast', 'director'])
 
-data['country'].fillna('Missing',inplace=True)
-data['date_added'].fillna('Missing',inplace=True)
-data['rating'].fillna('Missing',inplace=True)
-data.isnull().sum().sum()
+    def organiseData(self):
+        self.__data = self.__data.dropna( how='any',subset=['cast', 'director'])
 
-data["date_added"] = pd.to_datetime(data['date_added'])
-data['year_added'] = data['date_added'].dt.year
-data['month_added'] = data['date_added'].dt.month
+        self.__data['country'].fillna('Missing',inplace=True)
+        self.__data['date_added'].fillna('Missing',inplace=True)
+        self.__data['rating'].fillna('Missing',inplace=True)
+        self.__data.isnull().sum().sum()
 
-data = data.rename(columns={"listed_in":"genre"})
-data['genre'] = data['genre'].apply(lambda x: x.split(",")[0])
-data.head()
+        self.__data["date_added"] = pd.to_datetime(self.__data['date_added'])
+        self.__data['year_added'] = self.__data['date_added'].dt.year
+        self.__data['month_added'] = self.__data['date_added'].dt.month
 
-data.describe(include='O')
+        self.__data = self.__data.rename(columns={"listed_in":"genre"})
+        self.__data['genre'] = self.__data['genre'].apply(lambda x: x.split(",")[0])
+        self.__data.head()
 
-pieChart = PieChart(data, px)
-lineChart = LineChart(data, go)
-treeChart = TreeChart(data, pd, px)
+        self.__data.describe(include='O')
 
-pieChart.showChart()
-lineChart.showChart()
-treeChart.showChart() 
+    def __showPieChart(self):
+        pieChart = PieChart(self.__data, px)
+        pieChart.showChart()
+
+    def __showLineChart(self):
+        lineChart = LineChart(self.__data, go)
+        lineChart.showChart()
+
+    def __showTreeChart(self):
+        treeChart = TreeChart(self.__data, pd, px)
+        treeChart.showChart() 
+
+    def showAllCharts(self):
+        self.__showLineChart()
+        self.__showPieChart()
+        self.__showTreeChart()
+
+dataSet = pd.read_csv("./dataset/netflix_titles.csv", index_col = "show_id", parse_dates = True)
+
+chartBuilder = ChartBuilder(dataSet)
+
+chartBuilder.showAllCharts()
